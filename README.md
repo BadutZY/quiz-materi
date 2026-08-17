@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/icon.png" height="120">
+
 # Quiz Pixel
 
 **An Interactive Pixel-Style Quiz Web Application**
@@ -175,23 +177,6 @@ src/
 | Linting | oxlint |
 | Data Persistence | Browser local storage |
 | Hosting & Deployment | Vercel |
-
----
-
-## Deployment
-
-The application can be deployed to Vercel using either of the following methods:
-
-1. Push the project to a GitHub, GitLab, or Bitbucket repository, or deploy directly using the Vercel CLI:
-   ```bash
-   npm i -g vercel
-   vercel
-   ```
-2. When importing from a Git repository, Vercel automatically detects the Vite framework with the following settings:
-   - Build Command: `npm run build` (or `vite build`)
-   - Output Directory: `dist`
-   - Install Command: `npm install`
-3. No additional configuration is required. The `vercel.json` file at the root of the project provides a rewrite rule to `index.html` as a safeguard, although routing in this application already uses `HashRouter`, which is inherently safe for static hosting.
 
 ---
 
