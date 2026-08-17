@@ -99,6 +99,7 @@ export const PASS_RATIO = 0.73; // approximately 11 out of 15 correct answers
 The `PASS_RATIO` value (ranging from 0 to 1) can be adjusted as needed. The `minCorrectToPass(totalQuestions)` function automatically calculates the minimum number of correct answers required based on the number of questions available in a given level.
 
 ---
+</div>
 
 ## Managing Questions
 
@@ -160,6 +161,8 @@ src/
 ```
 
 ---
+
+<div align="center">
 
 ## Technology
 
