@@ -12,7 +12,7 @@
 [![Built With](https://img.shields.io/badge/Built%20With-React-61DAFB?style=for-the-badge&logo=react&logoColor=white)]()
 [![Bundler](https://img.shields.io/badge/Bundler-Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)]()
 
-[About](#about) • [Features](#core-features) • [Getting Started](#getting-started) • [Deployment](#deployment)
+[About](#about) • [Features](#core-features) • [Getting Started](#getting-started)
 
 ---
 
