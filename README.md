@@ -2,9 +2,9 @@
 
 <img src="public/icon.png" height="120">
 
-# Quiz Pixel
+# Quiz
 
-**An Interactive Pixel-Style Quiz Web Application**
+**An Interactive Quiz Web Application**
 
 [![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen?style=for-the-badge)]()
 [![Platform](https://img.shields.io/badge/Platform-Web-0078D6?style=for-the-badge)]()
@@ -18,7 +18,7 @@
 
 ## About
 
-Quiz Pixel is an interactive quiz web application built with a monochrome, pixel-art visual style. It is designed to help users test their knowledge across five academic subjects through a structured, level-based learning experience. Each subject offers a short reading passage before every question, encouraging users to learn as they play rather than simply guessing answers.
+Quiz is an interactive quiz web application built with a monochrome. It is designed to help users test their knowledge across five academic subjects through a structured, level-based learning experience. Each subject offers a short reading passage before every question, encouraging users to learn as they play rather than simply guessing answers.
 
 The project is built entirely with plain React (JSX, not TypeScript) and Vite, without relying on frameworks such as Next.js or TanStack. Routing is handled with `react-router-dom` using a hash-based router, which allows the application to be deployed safely as a static site without any additional server configuration.
 
@@ -48,7 +48,7 @@ The production-ready output is generated in the `dist/` folder.
 
 ## Subjects Covered
 
-Quiz Pixel organizes its content into five academic subjects, each with its own icon, illustration, and set of reading material:
+Quiz organizes its content into five academic subjects, each with its own icon, illustration, and set of reading material:
 
 | Subject | Description |
 |---|---|
@@ -79,7 +79,7 @@ Quiz Pixel organizes its content into five academic subjects, each with its own 
 ## Application Flow
 
 1. **Main Menu** (`/`) — the player enters a name and selects Start.
-2. **Subject Selection** (`/subjects`) — five subject cards are presented, each with a pixel-style icon.
+2. **Subject Selection** (`/subjects`) — five subject cards are presented, each with an icon.
 3. **Difficulty Selection** (`/subjects/:subjectId`) — four levels are available: Easy, Normal, Hard, and Very Hard. A new level is unlocked only after the previous level has been passed. Pass status and progress are stored automatically in the browser's local storage on a per-device basis, so progress persists across page refreshes.
 4. **Quiz** (`/quiz/:subjectId/:difficultyId`):
    - Each question begins with a short **Materi** passage, followed by a multiple-choice **Pertanyaan** with four options (A through D).
@@ -159,7 +159,7 @@ src/
     MateriDetail.jsx
   utils/
     storage.js             # local storage helper functions
-  index.css                 # monochrome pixel theme styling
+  index.css                 # monochrome heme styling
 ```
 
 ---
@@ -182,18 +182,18 @@ src/
 
 ## Design Notes
 
-The application uses a monochrome color theme, transitioning from dark to light gray, paired with pixelated panels and buttons. This includes thick borders, hard block shadows, and clipped pixel corners rather than rounded edges. Standard, readable typography (Plus Jakarta Sans) is used throughout the interface for legibility, while a pixel font (Press Start 2P) is reserved exclusively for the decorative "QUIZ PIXEL" logo on the Main Menu.
+The application uses a monochrome color theme, transitioning from dark to light gray, paired with pixelated panels and buttons. This includes thick borders, hard block shadows, and clipped pixel corners rather than rounded edges. Standard, readable typography (Plus Jakarta Sans) is used throughout the interface for legibility, while a pixel font (Press Start 2P) is reserved exclusively for the decorative "QUIZ" logo on the Main Menu.
 
 ---
 
 ## Disclaimer
 
-Quiz Pixel is an independent educational project built for learning and practice purposes. The reading material and questions included in the application are intended for general educational use and may be modified, expanded, or corrected as needed.
+Quiz is an independent educational project built for learning and practice purposes. The reading material and questions included in the application are intended for general educational use and may be modified, expanded, or corrected as needed.
 
 ---
 
-*Built for learning, one pixel at a time.*
+*Built for learning.*
 
-[Back to Top](#quiz-pixel)
+[Back to Top](#quiz)
 
 </div>
