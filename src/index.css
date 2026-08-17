@@ -1,0 +1,1313 @@
+/* ============================================================
+   QUIZ PIXEL — tema monokrom + elemen visual pixelated
+   Font tetap font biasa (Plus Jakarta Sans) supaya mudah dibaca.
+   Press Start 2P HANYA dipakai untuk logo kecil di menu utama.
+   ============================================================ */
+
+:root {
+  --bg: #111113;
+  --bg-grid: rgba(255, 255, 255, 0.07);
+  --bg-grid-strong: rgba(255, 255, 255, 0.13);
+  --surface: #19191c;
+  --card: #1d1d21;
+  --card-hover: #222227;
+  --ink: #f4f4f2;
+  --ink-dim: #a7a7ac;
+  --ink-faint: #6f6f76;
+  --border: #f4f4f2;
+  --border-soft: #4a4a50;
+  --primary: #f4f4f2;
+  --primary-ink: #111113;
+  --secondary: #3a3a40;
+  --secondary-ink: #f4f4f2;
+  --muted: #29292e;
+  --shadow: #000000;
+  --success: #f4f4f2;
+  --danger: #f4f4f2;
+  --locked: #5a5a60;
+  --radius: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+html {
+  background-color: var(--bg);
+  /* Corak grid dipasang di <html>, bukan di body/pseudo-element.
+     Kenapa? Background pada elemen <html> otomatis jadi "canvas
+     background" bawaan browser — SELALU menutupi seluruh halaman
+     yang bisa di-scroll, di semua ukuran layar & semua halaman,
+     tanpa terpengaruh z-index, stacking context, atau tinggi elemen
+     lain. Ini pendekatan paling sederhana & paling tidak mungkin gagal. */
+  background-image: linear-gradient(var(--bg-grid-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid-strong) 1px, transparent 1px),
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 112px 112px, 112px 112px, 28px 28px, 28px 28px;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  background: transparent;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+button,
+input {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* Reset gaya bawaan browser untuk <button> polos (yang belum punya class .pixel-btn)
+   supaya teks di dalamnya selalu ikut warna terang tema, bukan hitam bawaan browser. */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+img,
+svg {
+  display: block;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ---------- focus states (aksesibilitas keyboard) ----------
+   Semua elemen interaktif utama (button) memakai <button>, jadi satu
+   aturan ini mencakup PixelButton, tombol ikon (home/info/close),
+   subject-card, difficulty-card, option-btn, qmap-item, & bottom-nav-item.
+   Outline tetap terlihat jelas saat navigasi keyboard (Tab), tapi tidak
+   muncul saat klik mouse/tap biasa, supaya tidak mengganggu tampilan. */
+button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.pixel-input:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-soft);
+  border: 2px solid var(--surface);
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---------- layout helpers ---------- */
+.app-shell {
+  min-height: 100vh;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 18px 48px;
+}
+
+.container-narrow {
+  max-width: 480px;
+}
+
+/* ---------- pixel building blocks ---------- */
+.pixel-panel {
+  background: var(--surface);
+  border: 3px solid var(--border);
+  box-shadow: 7px 7px 0 0 var(--shadow);
+  position: relative;
+}
+
+.pixel-card {
+  background: var(--card);
+  border: 3px solid var(--border);
+  color: var(--ink);
+  box-shadow: 5px 5px 0 0 var(--shadow);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.pixel-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--shadow);
+  background: var(--card-hover);
+}
+
+.pixel-card:active {
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0 0 var(--shadow);
+}
+
+.pixel-corners {
+  /* Kotak penuh, tidak ada sudut yang terpotong/bolong */
+  clip-path: none;
+}
+
+.pixel-btn {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  padding: 14px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  border: 3px solid var(--border);
+  background: var(--primary);
+  color: var(--primary-ink);
+  box-shadow: 5px 5px 0 0 var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s ease;
+  user-select: none;
+  width: 100%;
+}
+
+.pixel-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 0 var(--shadow);
+}
+
+.pixel-btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 0 var(--shadow);
+}
+
+.pixel-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pixel-btn-secondary {
+  background: var(--secondary);
+  color: var(--secondary-ink);
+}
+
+.pixel-btn-ghost {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.pixel-btn-sm {
+  padding: 9px 14px;
+  font-size: 0.82rem;
+  width: auto;
+}
+
+.pixel-btn-icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.pixel-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 5px 9px;
+  border: 2px solid var(--border);
+  background: var(--muted);
+  color: var(--ink);
+}
+
+.pixel-tag-solid {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+
+.pixel-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 3px solid var(--border);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.pixel-input::placeholder {
+  color: var(--ink-faint);
+}
+
+.pixel-input:focus {
+  box-shadow: 4px 4px 0 0 var(--shadow);
+}
+
+.pixel-rule {
+  height: 6px;
+  background-image: repeating-linear-gradient(90deg, var(--border) 0 7px, transparent 7px 14px);
+  margin: 20px 0;
+}
+
+.pixel-progress {
+  height: 20px;
+  border: 3px solid var(--border);
+  background: var(--muted);
+  padding: 2px;
+}
+
+.pixel-progress > i {
+  display: block;
+  height: 100%;
+  background-image: repeating-linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 12px);
+  background-color: var(--ink-faint);
+  transition: width 0.25s ease;
+}
+
+.pixel-icon-frame {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--border);
+  background: var(--muted);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.subject-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- misc utility ---------- */
+.stack { display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.text-dim { color: var(--ink-dim); }
+.text-faint { color: var(--ink-faint); }
+.text-center { text-align: center; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+@media (max-width: 420px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ---------- modal overlay ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+  padding: 0;
+  animation: fadeIn 0.15s ease;
+}
+
+@media (min-width: 560px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.modal-box {
+  position: relative;
+  background: var(--surface);
+  border: 3px solid var(--border);
+  border-bottom: none;
+  box-shadow: 0 -6px 0 0 var(--shadow);
+  width: 100%;
+  max-width: 480px;
+  max-height: 86vh;
+  overflow-y: auto;
+  padding: 26px 22px 22px;
+  animation: slideUp 0.18s ease;
+}
+
+@media (min-width: 560px) {
+  .modal-box {
+    border-bottom: 3px solid var(--border);
+    box-shadow: 8px 8px 0 0 var(--shadow);
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------- subject grid ---------- */
+.subject-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 380px) {
+  .subject-grid {
+    gap: 10px;
+  }
+}
+
+.subject-card {
+  padding: 18px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.subject-card .pixel-icon-frame {
+  width: 52px;
+  height: 52px;
+}
+
+.subject-card .pixel-icon-frame.subject-card-image-frame {
+  width: 84px;
+  height: 84px;
+}
+
+.subject-card p:first-of-type {
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.subject-card p:last-of-type {
+  font-size: 0.72rem;
+  line-height: 1.3;
+}
+
+@media (max-width: 380px) {
+  .subject-card {
+    padding: 14px 8px;
+  }
+  .subject-card .pixel-icon-frame {
+    width: 46px;
+    height: 46px;
+  }
+  .subject-card .pixel-icon-frame.subject-card-image-frame {
+    width: 68px;
+    height: 68px;
+  }
+}
+
+/* ---------- materi content blocks ---------- */
+.materi-block {
+  margin-bottom: 18px;
+}
+
+.materi-block:last-child {
+  margin-bottom: 0;
+}
+
+.materi-heading {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+
+.materi-paragraph {
+  line-height: 1.7;
+  margin: 0 0 18px;
+}
+
+.materi-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.materi-image-frame {
+  border: 3px solid var(--border);
+  background: var(--muted);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  max-height: 280px;
+}
+
+.materi-image {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  display: block;
+}
+
+.materi-image-caption {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  margin: 8px 0 0;
+}
+
+.materi-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.materi-list li {
+  position: relative;
+  padding-left: 22px;
+  line-height: 1.6;
+}
+
+.materi-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+}
+
+.materi-example {
+  border: 3px solid var(--border);
+  background: var(--card);
+  padding: 14px 16px;
+}
+
+.materi-example-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-dim);
+  margin: 0 0 10px;
+}
+
+/* ---------- bottom nav ---------- */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--surface);
+  border-top: 3px solid var(--border);
+}
+
+.bottom-nav-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border: 3px solid var(--border);
+  background: var(--muted);
+  color: var(--ink-dim);
+  font-weight: 800;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.bottom-nav-item.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ---------- quiz question image ---------- */
+.quiz-question-image-frame {
+  border: 3px solid var(--border);
+  background: var(--muted);
+  margin-bottom: 14px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  max-height: 240px;
+}
+
+.quiz-question-image {
+  width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  display: block;
+}
+
+/* ---------- difficulty list ---------- */
+.difficulty-card {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.difficulty-card.locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.difficulty-badge {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--border);
+  background: var(--muted);
+  font-weight: 800;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+/* ---------- option button (quiz) ---------- */
+.option-btn {
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 3px solid var(--border);
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 4px 4px 0 0 var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+}
+
+.option-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--shadow);
+  background: var(--card-hover);
+}
+
+.option-btn.selected {
+  background: var(--primary);
+  color: var(--primary-ink);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 0 var(--shadow);
+}
+
+.option-letter {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 2px solid currentColor;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+/* ---------- analisis jawaban (setelah quiz lulus) ---------- */
+.quiz-analysis-modal {
+  max-width: 640px;
+}
+
+.analysis-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+.analysis-status.is-correct {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+
+.analysis-status.is-wrong {
+  background: transparent;
+  color: var(--ink-dim);
+  border-color: var(--border-soft);
+}
+
+.analysis-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2px solid var(--border-soft);
+  font-size: 0.9rem;
+  color: var(--ink-dim);
+}
+
+.analysis-option .option-letter {
+  width: 24px;
+  height: 24px;
+  font-size: 0.72rem;
+}
+
+.analysis-option.right-answer {
+  border-color: var(--border);
+  color: var(--ink);
+  font-weight: 700;
+  background: var(--card-hover);
+}
+
+.analysis-option.user-wrong {
+  border-color: var(--ink-faint);
+  color: var(--ink-dim);
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-faint);
+}
+
+.analysis-materi-note {
+  border-top: 2px dashed var(--border-soft);
+  padding-top: 10px;
+  line-height: 1.5;
+}
+
+/* ---------- question map (grid navigasi soal) ---------- */
+.qmap-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.qmap-grid-inline {
+  margin-top: 0;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+@media (min-width: 480px) {
+  .qmap-grid-inline {
+    grid-template-columns: repeat(auto-fill, minmax(34px, 44px));
+    gap: 7px;
+  }
+
+  .qmap-item {
+    font-size: 0.72rem;
+  }
+}
+
+.qmap-item {
+  position: relative;
+  aspect-ratio: 1;
+  border: 2px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--ink);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.qmap-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 0 var(--shadow);
+}
+
+.qmap-item:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.qmap-item.answered {
+  background: var(--primary);
+  color: var(--primary-ink);
+}
+
+/* centang kecil di pojok kotak yang sudah dijawab */
+.qmap-item.answered::after {
+  content: "✓";
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 0.6rem;
+  font-weight: 900;
+  background: var(--ink);
+  color: var(--bg);
+  border: 2px solid var(--border);
+  animation: fadeInScale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.qmap-item.current {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.qmap-legend {
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+}
+
+.qmap-legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+  background: var(--muted);
+}
+
+.qmap-legend-swatch.answered {
+  background: var(--primary);
+}
+
+.qmap-legend-swatch.current {
+  background: var(--muted);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---------- logo (satu-satunya elemen pakai font pixel, dekoratif) ---------- */
+.pixel-logo {
+  font-family: "Press Start 2P", monospace;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 420px) {
+  .pixel-logo {
+    font-size: 1.3rem;
+  }
+}
+
+/* ============================================================
+   ANIMASI — loading screen, transisi halaman, micro-interactions
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- keyframes ---------- */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes popSelect {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.045); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shakeX {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3) rotate(-8deg); }
+  55% { opacity: 1; transform: scale(1.12) rotate(4deg); }
+  75% { transform: scale(0.95) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(244, 244, 242, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(244, 244, 242, 0); }
+}
+
+@keyframes blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.5; }
+  92% { opacity: 0.4; }
+  100% { transform: translateY(-10vh) translateX(var(--drift, 20px)) rotate(90deg); opacity: 0; }
+}
+
+@keyframes shimmerMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 0; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(340px) rotate(540deg); opacity: 0; }
+}
+
+@keyframes blockLoad {
+  0%, 100% { opacity: 0.18; transform: scale(0.82); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes progressStripe {
+  from { background-position: 0 0; }
+  to { background-position: 20px 0; }
+}
+
+/* ---------- page transition ---------- */
+.container {
+  animation: pageEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ---------- staggered entrance for cards / lists ---------- */
+.subject-grid .subject-card,
+.stack > .difficulty-card,
+.qmap-grid .qmap-item {
+  animation: fadeInUp 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+/* ---------- interactive polish on existing components ---------- */
+.pixel-card,
+.difficulty-card,
+.subject-card {
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.pixel-btn svg {
+  transition: transform 0.18s ease;
+}
+
+.pixel-btn:hover:not(:disabled) svg {
+  transform: translateX(3px);
+}
+
+.pixel-btn-ghost:hover:not(:disabled) svg,
+.pixel-btn[class*="icon"]:hover:not(:disabled) svg {
+  transform: none;
+}
+
+.pixel-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.pixel-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+
+.pixel-btn:active:not(:disabled)::after {
+  opacity: 0.5;
+  transform: scale(1.4);
+  transition: 0s;
+}
+
+.pixel-icon-frame {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+button:hover > .pixel-icon-frame,
+.subject-card:hover .pixel-icon-frame {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+/* option button pop when selected */
+.option-btn.selected {
+  animation: popSelect 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* progress bar: smoother fill + moving stripe shimmer */
+.pixel-progress > i {
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  background-size: 20px 100%;
+  animation: progressStripe 0.9s linear infinite;
+}
+
+/* question panel re-entrance on navigation */
+.quiz-question-anim {
+  animation: fadeInUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* shake feedback (locked level click / belum lulus) */
+.shake-anim {
+  animation: shakeX 0.45s ease;
+}
+
+/* result icon */
+.result-icon-anim {
+  animation: bounceIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* bottom nav active pop */
+.bottom-nav-item {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottom-nav-item.active {
+  transform: translateY(-2px);
+}
+
+.bottom-nav-item:active {
+  transform: scale(0.95);
+}
+
+/* pixel dust floating background */
+.pixel-dust {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pixel-dust span {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--ink);
+  opacity: 0;
+  animation: floatUp linear infinite;
+}
+
+.app-shell > .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* main menu logo glow + blinking cursor */
+.loading-title .loading-cursor,
+.pixel-logo .menu-cursor {
+  animation: blink 1.1s step-end infinite;
+}
+
+.menu-icon-glow {
+  animation: glowPulse 2.6s ease-in-out infinite;
+}
+
+/* ---------- LOADING SCREEN ---------- */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--bg-grid-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid-strong) 1px, transparent 1px),
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 112px 112px, 112px 112px, 28px 28px, 28px 28px;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen-leave {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 0 24px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.loading-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 16px);
+  grid-template-rows: repeat(3, 16px);
+  gap: 5px;
+  padding: 16px;
+  border: 3px solid var(--border);
+  background: var(--surface);
+  box-shadow: 7px 7px 0 0 var(--shadow);
+}
+
+.loading-blocks span {
+  width: 16px;
+  height: 16px;
+  background: var(--ink);
+  animation: blockLoad 1.1s ease-in-out infinite;
+}
+
+.loading-title {
+  text-align: center;
+}
+
+.loading-progress {
+  width: 100%;
+}
+
+.loading-pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.loading-tip {
+  font-size: 0.72rem;
+  text-align: center;
+  min-height: 1.2em;
+}
+
+/* ---------- confetti (result: lulus) ---------- */
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  animation: confettiFall 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.result-fail-shake {
+  animation: shakeX 0.5s ease;
+}
+/* ============================================================
+   TAMPILAN DESKTOP — breakpoint mulai dari layar tablet-lebar
+   Mobile-first tetap jadi default; blok ini hanya menambah/
+   menimpa gaya untuk layar yang cukup lega.
+   ============================================================ */
+
+/* wrapper untuk membatasi lebar area baca (materi & kuis) supaya
+   baris teks tidak terlalu panjang saat container melebar */
+.reading-width {
+  width: 100%;
+}
+
+@media (min-width: 760px) {
+  .container {
+    max-width: 900px;
+    padding: 44px 40px 72px;
+  }
+
+  .container-narrow {
+    max-width: 500px;
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  /* --- grid mata pelajaran: lebih banyak kolom di layar lebar --- */
+  .subject-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .subject-card {
+    padding: 28px 18px;
+  }
+
+  .subject-card .pixel-icon-frame.subject-card-image-frame {
+    width: 96px;
+    height: 96px;
+  }
+
+  .subject-card p:first-of-type {
+    font-size: 1.02rem;
+  }
+
+  .subject-card p:last-of-type {
+    font-size: 0.82rem;
+  }
+
+  /* --- list tingkat kesulitan jadi 2 kolom --- */
+  .difficulty-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* --- lebar baca materi & kuis dibatasi & dipusatkan --- */
+  .reading-width {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .quiz-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* --- bottom nav jadi dock mengambang di tengah bawah --- */
+  .bottom-nav {
+    left: 50%;
+    right: auto;
+    bottom: 28px;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 3px solid var(--border);
+    box-shadow: 6px 6px 0 0 var(--shadow);
+  }
+
+  .bottom-nav-inner {
+    max-width: none;
+    width: auto;
+    padding: 8px;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 8px;
+  }
+
+  .bottom-nav-item {
+    flex-direction: row;
+    padding: 12px 22px;
+    font-size: 0.8rem;
+    gap: 8px;
+  }
+
+  .bottom-nav-item:hover {
+    background: var(--card-hover);
+    color: var(--ink);
+  }
+
+  .bottom-nav-item.active:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .bottom-nav-item.active {
+    transform: none;
+  }
+
+  /* tombol ikon bulat (home / info / close) sedikit lebih besar &
+     ada shadow supaya lebih terasa "bisa diklik" di layar besar */
+  header .pixel-icon-frame,
+  .row-between .pixel-icon-frame {
+    width: 52px;
+    height: 52px;
+    box-shadow: 4px 4px 0 0 var(--shadow);
+    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease;
+  }
+
+  header button:hover .pixel-icon-frame,
+  .row-between button:hover .pixel-icon-frame {
+    box-shadow: 6px 6px 0 0 var(--shadow);
+  }
+
+  /* --- modal lebih lega di layar besar --- */
+  .modal-box {
+    max-width: 580px;
+    padding: 34px 34px 30px;
+  }
+
+  .quiz-analysis-modal {
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1180px) {
+  .container {
+    max-width: 1080px;
+  }
+
+  .subject-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* modal bottom-sheet di mobile: beri jarak aman dari home indicator
+   (bottom nav sudah tidak menutupi modal karena modal di-portal-kan
+   ke document.body dan selalu berada paling atas, tapi tetap kasih
+   sedikit padding aman di perangkat dengan notch) */
+@media (max-width: 759px) {
+  .modal-box {
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+}
